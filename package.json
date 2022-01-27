@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "fastify": "^3.27.0",
+    "fastify-openapi-glue": "^2.6.5",
     "nanoid": "^3.2.0"
   },
   "devDependencies": {
