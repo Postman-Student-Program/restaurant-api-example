@@ -1,0 +1,121 @@
+openapi: 3.0.0
+info:
+  version: v1.0.0
+  title: Restaurants
+  description: "This is an API for managing details of restaurants."
+servers:
+  - url: "http://api.example.com"
+paths:
+  /restaurants:
+    get:
+      summary: Restaurants
+      operationId: getRestaurants
+      tags:
+        - Restaurant
+      responses:
+        "200":
+          description: Restaurant
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestaurantListing"
+    post:
+      summary: Restaurant
+      operationId: addRestaurant
+      tags:
+        - Restaurant
+      requestBody:
+        required: true
+        description: Restaurant
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Restaurant"
+      responses:
+        "201":
+          description: Restaurant
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Restaurant"
+  /restaurants/{id}:
+    get:
+      summary: Restaurant
+      operationId: getRestaurant
+      parameters:
+        - name: id
+          in: path
+          description: The unique id.
+          required: true
+          schema:
+            type: string
+      tags:
+        - Restaurant
+      responses:
+        "200":
+          description: Restaurant
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Restaurant"
+    put:
+      summary: Restaurant
+      operationId: updateRestaurant
+      parameters:
+        - name: id
+          in: path
+          description: The unique id.
+          required: true
+          schema:
+            type: string
+      tags:
+        - Restaurant
+      requestBody:
+        description: Restaurant
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Restaurant"
+      responses:
+        "204":
+          description: Restaurant
+    delete:
+      summary: Restaurant
+      operationId: deleteRestaurant
+      parameters:
+        - name: id
+          in: path
+          description: The unique id.
+          required: true
+          schema:
+            type: string
+      tags:
+        - Restaurant
+      responses:
+        "204":
+          description: Restaurant
+components:
+  schemas:
+    RestaurantListing:
+      type: array
+      items:
+        $ref: "#/components/schemas/Restaurant"
+    Restaurant:
+      type: object
+      required:
+        - name
+        - cuisine
+        - hasTakeout
+      properties:
+        id:
+          description: Unique identifier for the restaurant
+          type: string
+        name:
+          description: The name of the restaurant.
+          type: string
+        cuisine:
+          description: The cuisine of the restaurant.
+          type: string
+        hasTakeout:
+          description: "Either the actual menu as a structured representation, as text, or a URL of the menu."
+          type: boolean
