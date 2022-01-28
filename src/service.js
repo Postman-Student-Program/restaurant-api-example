@@ -1,87 +1,68 @@
-const { nanoid } = require("nanoid");
+const Restaurant = require("./models/Restaurant");
 
-let restaurants = [
-  {
-    id: "4Oj9hUC-EwrYdn9uOYeui",
-    name: "Puerto Viejo",
-    cuisine: "dominican",
-    hasTakeout: true,
-  },
-  {
-    id: "8NBUuV1hY1mUEomWxnws1",
-    name: "Sadas",
-    cuisine: "japanese",
-    hasTakeout: true,
-  },
-];
-
+// fastify-openapi-glue library expects the method names in the Service class to match the `operationId` from each path in your schema. That's how it will know the request method (GET/POST, etc) and the schema for the request/response of each route
 class Service {
   constructor() {}
 
-  getRestaurants(_req, res) {
+  getRestaurants = async (_req, res) => {
+    const restaurants = await Restaurant.find();
     res.send(restaurants);
-  }
+  };
 
-  addRestaurant(req, res) {
-    // get newRestaurant properties from request body
-    const newRestaurant = req.body;
-    // generate a unique random id and add it to newRestaurant
-    newRestaurant.id = nanoid();
-
-    // save new restaurant to db
-    restaurants.push(newRestaurant);
+  addRestaurant = async (req, res) => {
+    // create and save restaurant to db
+    const newRestaurant = await Restaurant.create(req.body);
 
     res.code(201).send(newRestaurant);
-  }
+  };
 
-  getRestaurant(req, res) {
+  getRestaurant = async (req, res) => {
     // get id from path parameters
     const { id } = req.params;
-    // Get restaurant from database
-    const restaurant = restaurants.find((r) => r.id === id);
 
-    // Send restaurant in response if found, otherwise send 404
+    // check that restaurant exists
+    const restaurant = await Restaurant.findById(id);
+
     if (restaurant) {
       res.send(restaurant);
     } else {
       res.code(404).send({ message: `Restaurant with id '${id}' not found` });
     }
-  }
+  };
 
-  updateRestaurant(req, res) {
+  updateRestaurant = async (req, res) => {
     // get id from path parameters
     const { id } = req.params;
 
-    // check that restuarant exists. If not found, `foundIndex` will equal -1
-    const foundIndex = restaurants.findIndex((r) => r.id === id);
+    // check that restaurant exists
+    const restaurant = await Restaurant.findById(id);
 
-    if (foundIndex > -1) {
+    if (restaurant) {
       // Update restaurant in database
-      const prevData = restaurants[foundIndex];
-      restaurants[foundIndex] = { ...prevData, ...req.body };
+      await restaurant.update(req.body);
       // send empty response with status 204
       res.code(204).send();
     } else {
       res.code(404).send({ message: `Restaurant with id '${id}' not found` });
     }
-  }
+  };
 
-  deleteRestaurant(req, res) {
+  deleteRestaurant = async (req, res) => {
     // get id from path parameters
     const { id } = req.params;
 
-    // check that restuarant exists. If not found, `foundIndex` will equal -1
-    const foundIndex = restaurants.findIndex((r) => r.id === id);
+    // check that restuarant exists
+    const restaurant = await Restaurant.findById(id);
 
-    if (foundIndex > -1) {
+    if (restaurant) {
       // Delete restaurant from database
-      restaurants.splice(foundIndex, 1);
+      await Restaurant.findByIdAndRemove(id);
       // send empty response with status 204
       res.code(204).send();
     } else {
       res.code(404).send({ message: `Restaurant with id '${id}' not found` });
     }
-  }
+  };
 }
 
 module.exports = Service;

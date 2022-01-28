@@ -13,6 +13,7 @@
   "dependencies": {
     "fastify": "^3.27.0",
     "fastify-openapi-glue": "^2.6.5",
+    "mongoose": "^6.1.8",
     "nanoid": "^3.2.0"
   },
   "devDependencies": {
